@@ -1,0 +1,13 @@
+<svg id="button_close" data-name="button/close" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_1905" data-name="Rectangle 1905" width="20" height="20" fill="#fff" stroke="#707070" stroke-width="1" opacity="0.64"/>
+    </clipPath>
+  </defs>
+  <rect id="Rectangle_2014" data-name="Rectangle 2014" width="40" height="40" rx="4" fill="#0a0a0a" opacity="0.4"/>
+  <g id="icon_close" data-name="icon/close" transform="translate(10 10)">
+    <g id="icon_close-2" data-name="icon/close" clip-path="url(#clip-path)">
+      <path id="close_1_" data-name="close(1)" d="M11.833,10.011,19.62,2.223A1.3,1.3,0,1,0,17.788.391L10,8.179,2.212.391A1.3,1.3,0,0,0,.38,2.223l7.788,7.788L.38,17.8a1.3,1.3,0,1,0,1.832,1.832L10,11.843l7.788,7.788A1.3,1.3,0,1,0,19.62,17.8Zm0,0" transform="translate(0 -0.011)" fill="#fff"/>
+    </g>
+  </g>
+</svg>
