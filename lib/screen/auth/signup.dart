@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, prefer_final_fields
 
 import 'dart:convert';
 
@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 
 import 'package:kedaireka/theme/constant.dart';
 import 'package:kedaireka/widgets/persistence_bottom_nav.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:kedaireka/wrapper/auth_manager.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -20,6 +20,7 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  AuthenticationManager _signUpInitiate = Get.put(AuthenticationManager());
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
   final formKey2 = GlobalKey<FormState>();
@@ -123,6 +124,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   TextFormField(
+                    // textInputAction: TextInputAction.next,
                     // controller: _textController,
                     cursorColor: Colors.black,
                     decoration: textInputDecoration.copyWith(
@@ -149,9 +151,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       if (val!.isEmpty) {
                         return 'Masukan Nama';
                       }
-                      if (val.length < 4) {
-                        return 'Email Harus lebih dari \n 2 karakter';
-                      }
+                      // if (val.length < 1) {
+                      //   return 'Email Harus lebih dari \n 2 karakter';
+                      // }
                       return null;
                     },
                     onChanged: (val) {
@@ -163,6 +165,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   TextFormField(
                     // controller: _textController,
+                    // textInputAction: TextInputAction.next,
                     cursorColor: Colors.black,
                     decoration: textInputDecoration.copyWith(
                         labelText: "Email",
@@ -202,6 +205,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   TextFormField(
                     // controller: _textController,
+                    // textInputAction: TextInputAction.next,
                     cursorColor: kFillColor,
                     decoration: textInputDecoration.copyWith(
                         labelStyle: textInputDecoration.labelStyle!
@@ -251,6 +255,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   TextFormField(
                     // controller: _textController,
+
                     cursorColor: kFillColor,
                     decoration: textInputDecoration.copyWith(
                         labelStyle: textInputDecoration.labelStyle!
@@ -319,7 +324,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             fontSize: 16,
                             fontWeight: FontWeight.w800),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         // Navigator.of(context).push(PageRouteBuilder(
                         //     pageBuilder:
                         //         (context, animation, anotherAnimation) =>
@@ -336,11 +341,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         //         child: child,
                         //       );
                         //     }));
-                        Get.to(() => const PersistenceBottomNavBar());
-
-                        // if (formKey.currentState!.validate()) {
-                        //   _SignUp();
-                        // }
+                        // Get.to(() => const PersistenceBottomNavBar());
+                        if (formKey.currentState!.validate()) {
+                          EasyLoading.show();
+                          await _signUpInitiate.userRegister(
+                              email!, password, name);
+                          await _signUpInitiate.userLogin(email!, password);
+                          EasyLoading.dismiss();
+                          // Get.to(() => const PersistenceBottomNavBar());
+                        }
                       },
                     ),
                   ),
@@ -381,148 +390,5 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ],
     );
-  }
-
-  // Widget _loading() {
-  //   return Center(child: EasyLoading.show(),);
-  // }
-
-  void _signUp() async {
-    EasyLoading.show(
-        status: 'Loading SignUp',
-        dismissOnTap: false,
-        indicator: const Center(
-            child: SpinKitRipple(
-          color: kMaincolor,
-          size: 80,
-        )));
-    var data = {
-      'email': email,
-      'password': password,
-    };
-
-    // var res = await UserAuth().authData(data);
-    var res = 'silent';
-    var body = json.decode(res);
-
-    if (body['message'] == "SignUp success!") {
-      SharedPreferences localData = await SharedPreferences.getInstance();
-      // localData.setString('message', 'SignUp success!');
-      localData.setString('access_token', json.encode(body['access_token']));
-      localData.setString('data', json.encode(body['data']));
-      print('$body');
-
-      setState(() {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const PersistenceBottomNavBar()));
-      });
-    } else {
-      EasyLoading.dismiss();
-      _showMsg(body['message']);
-    }
-    EasyLoading.dismiss();
-  }
-
-  void presentLoader(BuildContext context,
-      {String textIP = 'Aguarde...',
-      String uid = '',
-      bool barrierDismissible = true,
-      bool error = false,
-      bool willPop = true,
-      bool success = false,
-      List<Widget>? action,
-      Widget? elevatedButton,
-      // required VoidCallback onPressed,
-      TextEditingController? ipEditingText,
-      double? value}) {
-    showDialog(
-        barrierDismissible: barrierDismissible,
-        context: context,
-        builder: (c) {
-          return WillPopScope(
-            onWillPop: () async {
-              return willPop;
-            },
-            child: AlertDialog(
-              content: SizedBox(
-                height: 180,
-                width: 240,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Current IP or Web: \n$textIP',
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Form(
-                      key: formKey2,
-                      onChanged: () => setState(() {}),
-                      child: TextFormField(
-                        // autovalidateMode: AutovalidateMode.always,
-                        // autovalidate: true,
-                        validator: (value) {
-                          value!.length < 6
-                              // ignore: unnecessary_statements
-                              ? 'Number must be at least 8 digits'
-                              : // return an error message
-                              null;
-
-                          // value!.length < 8
-                          //     ? _isEnable = false
-                          //     : _isEnable = true;
-                        },
-                        controller: ipEditingText,
-                        cursorColor: kFillColor,
-                        decoration: textInputDecoration.copyWith(
-                            labelText: "Type here to edit address",
-                            labelStyle: textInputDecoration.labelStyle!
-                                .copyWith(color: Colors.black54, fontSize: 16),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: kMaincolor,
-                                width: 2,
-                              ),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.black38, width: 1.3))),
-                        style: textInputDecoration.labelStyle!
-                            .copyWith(fontWeight: FontWeight.w500),
-                        textAlignVertical: TextAlignVertical.center,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    ElevatedButton(
-                        clipBehavior: Clip.hardEdge,
-                        style: ElevatedButton.styleFrom(
-                          primary: kFillColor,
-                        ),
-                        child: Text(
-                          "EDIT ADDRESS",
-                          style: textInputDecoration.labelStyle!.copyWith(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800),
-                        ),
-                        onPressed: () async {
-                          SharedPreferences localData =
-                              await SharedPreferences.getInstance();
-                          print('saving ip ${ipEditingText!.text}');
-                          localData.setString('username', ipEditingText.text);
-                        })
-                  ],
-                ),
-              ),
-              actions: action,
-            ),
-          );
-        });
   }
 }

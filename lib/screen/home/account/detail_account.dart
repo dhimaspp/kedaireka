@@ -126,7 +126,7 @@ class _DetailAccountState extends State<DetailAccount> {
                                   ),
                                 ),
                                 AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 300),
+                                    duration: const Duration(milliseconds: 200),
                                     transitionBuilder: (Widget child,
                                         Animation<double> animation) {
                                       final offsetAnimation = Tween<Offset>(
@@ -233,7 +233,7 @@ class _DetailAccountState extends State<DetailAccount> {
                                   ),
                                 ),
                                 AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 300),
+                                    duration: const Duration(milliseconds: 200),
                                     transitionBuilder: (Widget child,
                                         Animation<double> animation) {
                                       final offsetAnimation = Tween<Offset>(
@@ -341,7 +341,7 @@ class _DetailAccountState extends State<DetailAccount> {
                                   ),
                                 ),
                                 AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 300),
+                                    duration: const Duration(milliseconds: 200),
                                     transitionBuilder: (Widget child,
                                         Animation<double> animation) {
                                       final offsetAnimation = Tween<Offset>(

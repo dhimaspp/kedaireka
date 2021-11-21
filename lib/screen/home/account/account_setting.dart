@@ -1,7 +1,12 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:kedaireka/screen/auth/login.dart';
 import 'package:kedaireka/screen/home/account/detail_account.dart';
 import 'package:kedaireka/theme/constant.dart';
+import 'package:kedaireka/wrapper/auth_manager.dart';
 
 class AccountSetting extends StatefulWidget {
   const AccountSetting({Key? key}) : super(key: key);
@@ -11,6 +16,17 @@ class AccountSetting extends StatefulWidget {
 }
 
 class _AccountSettingState extends State<AccountSetting> {
+  final AuthenticationManager _authmanager = Get.put(AuthenticationManager());
+  String? nama;
+  @override
+  void initState() {
+    super.initState();
+    final localStorage = GetStorage();
+    setState(() {
+      nama = localStorage.read('name');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,17 +65,18 @@ class _AccountSettingState extends State<AccountSetting> {
                         const SizedBox(
                           height: 30,
                         ),
-                        const CircleAvatar(
+                        CircleAvatar(
                           radius: 55,
                           backgroundColor: kMaincolor,
                           child: Text(
+                            // nama![0].capitalize!,
                             'K',
                             style: TextStyle(color: Colors.white, fontSize: 80),
                           ),
                         ),
                         Container(
                           padding: const EdgeInsets.all(12),
-                          child: const Text(
+                          child: Text(
                             'Kedaireka',
                             style: TextStyle(color: kMaincolor, fontSize: 24),
                           ),
@@ -187,7 +204,10 @@ class _AccountSettingState extends State<AccountSetting> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            _authmanager.userLogout();
+                            Get.to(() => const LoginScreen());
+                          },
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 15),
                             height: 72,

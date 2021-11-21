@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:kedaireka/screen/home/account/account_setting.dart';
 import 'package:kedaireka/screen/home/desease_analyze/takePicture.dart';
 import 'package:kedaireka/screen/home/instruksi_screen.dart';
@@ -18,11 +21,13 @@ class _PersistenceBottomNavBarState extends State<PersistenceBottomNavBar> {
   // PersistentTabController? _controller;
   final autoSizeGroup = AutoSizeGroup();
   int? _selectedBar;
+  bool back = false;
 
   @override
   void initState() {
     super.initState();
     _selectedBar = 0;
+    EasyLoading.dismiss();
     // _controller = PersistentTabController(initialIndex: 0);
   }
 
@@ -86,51 +91,78 @@ class _PersistenceBottomNavBarState extends State<PersistenceBottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: const Icon(
-            Icons.camera_alt_outlined,
-            color: Colors.white,
-          )),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      body: IndexedStack(
-        index: _selectedBar,
-        children: _buildScreens,
-      ),
-      bottomNavigationBar: AnimatedBottomNavigationBar.builder(
-        itemCount: iconList.length,
-        tabBuilder: (int index, bool isActive) {
-          final color = isActive ? kMaincolor : Colors.grey;
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                iconList[index],
-                size: 24,
-                color: color,
+    return WillPopScope(
+      onWillPop: () {
+        showDialog<bool>(
+          context: context,
+          builder: (c) => AlertDialog(
+            title: const Text('Keluar'),
+            content: const Text(
+              'Anda ingin keluar aplikasi?',
+            ),
+            actions: [
+              TextButton(
+                child: const Text(
+                  'Yes',
+                  style: TextStyle(color: Colors.black),
+                ),
+                onPressed: () => exit(0),
               ),
-              const SizedBox(height: 4),
-              Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: AutoSizeText(
-                    nameBarList[index],
-                    maxLines: 1,
-                    style: TextStyle(color: color),
-                    group: autoSizeGroup,
-                  ))
+              TextButton(
+                child: const Text('No', style: TextStyle(color: Colors.black)),
+                onPressed: () => Navigator.pop(c, false),
+              ),
             ],
-          );
-        },
-        backgroundColor: Colors.white,
-        elevation: 18,
-        splashColor: kFillColor,
-        splashSpeedInMilliseconds: 300,
-        activeIndex: _selectedBar!,
-        gapLocation: GapLocation.center,
-        notchSmoothness: NotchSmoothness.defaultEdge,
-        onTap: _onItemTapped,
+          ),
+        );
+        return Future.value(back);
+      },
+      child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+            onPressed: () {},
+            child: const Icon(
+              Icons.camera_alt_outlined,
+              color: Colors.white,
+            )),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        body: IndexedStack(
+          index: _selectedBar,
+          children: _buildScreens,
+        ),
+        bottomNavigationBar: AnimatedBottomNavigationBar.builder(
+          itemCount: iconList.length,
+          tabBuilder: (int index, bool isActive) {
+            final color = isActive ? kMaincolor : Colors.grey;
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  iconList[index],
+                  size: 24,
+                  color: color,
+                ),
+                const SizedBox(height: 4),
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: AutoSizeText(
+                      nameBarList[index],
+                      maxLines: 1,
+                      style: TextStyle(color: color),
+                      group: autoSizeGroup,
+                    ))
+              ],
+            );
+          },
+          backgroundColor: Colors.white,
+          elevation: 18,
+          splashColor: kFillColor,
+          splashSpeedInMilliseconds: 300,
+          activeIndex: _selectedBar!,
+          gapLocation: GapLocation.center,
+          notchSmoothness: NotchSmoothness.defaultEdge,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }
