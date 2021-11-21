@@ -24,12 +24,13 @@ final themePP = ThemeData(
       bodyText2: TextStyle(fontFamily: 'Anodina', fontWeight: FontWeight.w300),
       caption: TextStyle(fontFamily: 'Anodina', fontWeight: FontWeight.w200)),
   splashColor: kFillColor,
+
   primaryColorDark: const Color(0xFF307B52),
   visualDensity: VisualDensity.adaptivePlatformDensity,
   primaryColorLight: const Color(0xFFEAF1ED),
   primaryColor: const Color(0xFF307B52),
   // accentColor: kMaincolor,
-  textSelectionTheme: const TextSelectionThemeData(cursorColor: Colors.white),
+  textSelectionTheme: const TextSelectionThemeData(cursorColor: kMaincolor),
   scaffoldBackgroundColor: Colors.white,
   // typography: Ty,
   inputDecorationTheme: InputDecorationTheme(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:kedaireka/screen/auth/login.dart';
+import 'package:kedaireka/screen/home/account/change_password.dart';
 import 'package:kedaireka/screen/home/account/detail_account.dart';
 import 'package:kedaireka/theme/constant.dart';
 import 'package:kedaireka/wrapper/auth_manager.dart';
@@ -144,7 +145,9 @@ class _AccountSettingState extends State<AccountSetting> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Get.to(() => ChangePassword());
+                          },
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 15),
                             height: 72,

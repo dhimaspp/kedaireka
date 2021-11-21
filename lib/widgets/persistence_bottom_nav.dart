@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
 import 'package:kedaireka/screen/home/account/account_setting.dart';
 import 'package:kedaireka/screen/home/desease_analyze/takePicture.dart';
 import 'package:kedaireka/screen/home/instruksi_screen.dart';
@@ -22,6 +24,8 @@ class _PersistenceBottomNavBarState extends State<PersistenceBottomNavBar> {
   final autoSizeGroup = AutoSizeGroup();
   int? _selectedBar;
   bool back = false;
+  // Future<List>? cameras;
+  CameraDescription? cameraDescription;
 
   @override
   void initState() {
@@ -119,7 +123,13 @@ class _PersistenceBottomNavBarState extends State<PersistenceBottomNavBar> {
       },
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () async {
+              final cameras = await availableCameras();
+              cameraDescription = cameras.firstWhere(
+                  (CameraDescription cameraDesc) =>
+                      cameraDesc.lensDirection == CameraLensDirection.back);
+              Get.to(() => TakePictureScreen(cameraDesc: cameraDescription!));
+            },
             child: const Icon(
               Icons.camera_alt_outlined,
               color: Colors.white,
