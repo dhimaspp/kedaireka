@@ -157,4 +157,29 @@ class AuthApi extends GetConnect {
       return message.toString();
     }
   }
+
+  Future gantiPassword(String password) async {
+    var postRegister = FormData({"new_password": password});
+    final storaging = GetStorage();
+    var token = await storaging.read('token');
+
+    final response = await put(
+        'https://kedaireka.widyarobotics.com/v1/user/change_password/',
+        postRegister,
+        contentType: 'multipart/form-data',
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Connection': 'keep-alive',
+        });
+    if (response.statusCode == HttpStatus.ok) {
+      return 'ganti password sukses';
+    } else if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+      return 'Harap periksa internet koneksi anda';
+    } else {
+      var body = response.body;
+      var message = body['detail'];
+      print('error message $message');
+      return message.toString();
+    }
+  }
 }

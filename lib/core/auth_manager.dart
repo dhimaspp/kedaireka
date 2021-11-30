@@ -130,4 +130,20 @@ class AuthenticationManager extends GetxController {
           });
     }
   }
+
+  Future<void> userGantiPassword(String password) async {
+    final response = await _authApi.gantiPassword(password);
+    if (response == 'ganti password sukses') {
+      print('ganti password sukses');
+    } else {
+      Get.defaultDialog(
+          middleText: response,
+          textConfirm: 'OK',
+          confirmTextColor: Colors.white,
+          buttonColor: kMaincolor,
+          onConfirm: () {
+            Get.back();
+          });
+    }
+  }
 }

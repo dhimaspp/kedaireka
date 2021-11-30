@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:kedaireka/core/auth_manager.dart';
 import 'package:kedaireka/theme/constant.dart';
 
 class ChangePassword extends StatefulWidget {
@@ -13,6 +14,7 @@ class ChangePassword extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
+  final AuthenticationManager _authmanager = Get.put(AuthenticationManager());
   TextEditingController kataSandiLamaController = TextEditingController();
   TextEditingController kataSandiBaruController = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -253,7 +255,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                         if (val!.isEmpty) {
                                           return 'Masukan Konfirmasi Kata Sandi';
                                         } else if (val != kataSandiBaru) {
-                                          return 'Kata Sandi Tidak cocok';
+                                          return 'Konfirmasi Kata Sandi Tidak cocok';
                                         }
                                         //   // if (!regExp.hasMatch(val)) {
                                         //   //   return 'Password harus terdiri dari 8 karakter dan \n kombinasi angka dan huruf';
@@ -298,7 +300,16 @@ class _ChangePasswordState extends State<ChangePassword> {
                   onPressed: () async {
                     if (formKey.currentState?.validate() ?? false) {
                       EasyLoading.show();
-
+                      _authmanager
+                          .userGantiPassword(kataSandiBaru!)
+                          .whenComplete(() => Get.defaultDialog(
+                              middleText: 'Ganti Password Berhasil',
+                              textConfirm: 'OK',
+                              confirmTextColor: Colors.white,
+                              buttonColor: kMaincolor,
+                              onConfirm: () {
+                                Get.back();
+                              }));
                       EasyLoading.dismiss();
                     }
                   },
