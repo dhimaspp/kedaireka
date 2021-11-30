@@ -6,12 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:kedaireka/screen/auth/signup.dart';
 import 'package:kedaireka/theme/constant.dart';
 import 'package:kedaireka/widgets/exit_transition.dart';
 import 'package:kedaireka/widgets/persistence_bottom_nav.dart';
 
-import 'package:kedaireka/wrapper/auth_manager.dart';
+import 'package:kedaireka/core/auth_manager.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -254,7 +255,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () async {
                         if (formKey.currentState?.validate() ?? false) {
                           EasyLoading.show();
-                          await _loginInitiative.userLogin(email, password);
+
+                          await _loginInitiative
+                              .userLogin(email, password)
+                              .whenComplete(() async {
+                            final localStorage = GetStorage();
+                            await localStorage.write('email', email);
+                          });
                           EasyLoading.dismiss();
                         }
                       },

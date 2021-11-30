@@ -1,5 +1,9 @@
+// ignore_for_file: prefer_final_fields
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:kedaireka/core/auth_manager.dart';
 import 'package:kedaireka/theme/constant.dart';
 
 class DetailAccount extends StatefulWidget {
@@ -10,10 +14,29 @@ class DetailAccount extends StatefulWidget {
 }
 
 class _DetailAccountState extends State<DetailAccount> {
+  final AuthenticationManager _authmanager = Get.put(AuthenticationManager());
+  AuthenticationManager _authfind = Get.find();
   TextEditingController namaController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   bool? ubahNama, ubahUsername, ubahEmail;
+  bool loadingUbahNama = false,
+      loadingUbahUsername = false,
+      loadingUbahEmail = false;
+  bool successUbahNama = false,
+      successUbahUsername = false,
+      successUbahEmail = false;
+
+  String? nama, email;
+  @override
+  void initState() {
+    super.initState();
+    final localStorage = GetStorage();
+    setState(() {
+      nama = localStorage.read('name');
+      email = localStorage.read('email');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,13 +93,13 @@ class _DetailAccountState extends State<DetailAccount> {
                           const SizedBox(
                             height: 30,
                           ),
-                          const CircleAvatar(
+                          CircleAvatar(
                             radius: 55,
                             backgroundColor: kMaincolor,
                             child: Text(
-                              'K',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 80),
+                              nama![0].capitalizeFirst!,
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 80),
                             ),
                           ),
                           Container(
@@ -104,9 +127,9 @@ class _DetailAccountState extends State<DetailAccount> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text(
-                                        'Kedaireka Find Disease',
-                                        style: TextStyle(
+                                      Text(
+                                        nama!.capitalizeFirst!,
+                                        style: const TextStyle(
                                             fontSize: 16,
                                             color: Colors.black,
                                             fontWeight: FontWeight.w400),
@@ -114,6 +137,7 @@ class _DetailAccountState extends State<DetailAccount> {
                                       TextButton(
                                           onPressed: () {
                                             setState(() {
+                                              successUbahNama = false;
                                               ubahNama = true;
                                             });
                                           },
@@ -125,6 +149,15 @@ class _DetailAccountState extends State<DetailAccount> {
                                     ],
                                   ),
                                 ),
+                                successUbahNama == true
+                                    ? const Padding(
+                                        padding: EdgeInsets.only(top: 8),
+                                        child: Text(
+                                          "Berhasil mengubah nama!",
+                                          style: TextStyle(color: kMaincolor),
+                                        ),
+                                      )
+                                    : const SizedBox(),
                                 AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 200),
                                     transitionBuilder: (Widget child,
@@ -148,6 +181,14 @@ class _DetailAccountState extends State<DetailAccount> {
                                               children: [
                                                 TextFormField(
                                                   controller: namaController,
+                                                  validator: (val) {
+                                                    if (val ==
+                                                        namaController.text) {
+                                                      return 'Nama baru sama dengan nama anda sebelumnya';
+                                                    } else if (val!.isEmpty) {
+                                                      return 'Masukan nama baru';
+                                                    }
+                                                  },
                                                   decoration:
                                                       const InputDecoration(
                                                           hintText:
@@ -170,7 +211,33 @@ class _DetailAccountState extends State<DetailAccount> {
                                                             .styleFrom(
                                                                 primary:
                                                                     kMaincolor),
-                                                        onPressed: () {},
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            loadingUbahNama =
+                                                                true;
+                                                          });
+                                                          _authmanager
+                                                              .userGantiNama(
+                                                                  namaController
+                                                                      .text)
+                                                              .whenComplete(
+                                                                  () async {
+                                                            setState(() {
+                                                              final localStorage =
+                                                                  GetStorage();
+                                                              var namas =
+                                                                  localStorage
+                                                                      .read(
+                                                                          'name');
+                                                              nama = namas;
+                                                              successUbahNama =
+                                                                  true;
+                                                              ubahNama = false;
+                                                              loadingUbahNama =
+                                                                  false;
+                                                            });
+                                                          });
+                                                        },
                                                         child: const Text(
                                                           'Perbarui Nama',
                                                         )),
@@ -185,115 +252,14 @@ class _DetailAccountState extends State<DetailAccount> {
                                                           style: TextStyle(
                                                               color:
                                                                   kMaincolor),
-                                                        ))
-                                                  ],
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        : const SizedBox(
-                                            height: 25,
-                                          )),
-                                const Text(
-                                  'Username',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                                Container(
-                                  decoration: const BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                    color: Colors.grey,
-                                  ))),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        'Kedaireka',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w400),
-                                      ),
-                                      TextButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              ubahUsername = true;
-                                            });
-                                          },
-                                          child: const Text('Ubah',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: kMaincolor,
-                                                  fontWeight: FontWeight.w400)))
-                                    ],
-                                  ),
-                                ),
-                                AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 200),
-                                    transitionBuilder: (Widget child,
-                                        Animation<double> animation) {
-                                      final offsetAnimation = Tween<Offset>(
-                                              begin: const Offset(1.0, 0.0),
-                                              end: const Offset(0.0, 0.0))
-                                          .animate(animation);
-                                      return SlideTransition(
-                                        position: offsetAnimation,
-                                        child: child,
-                                      );
-                                    },
-                                    child: ubahUsername == true
-                                        ? Container(
-                                            padding: const EdgeInsets.all(8),
-                                            // height: 60,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                TextFormField(
-                                                  controller: namaController,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          hintText:
-                                                              'Masukan username baru',
-                                                          // border: InputBorder.none,
-                                                          focusedBorder: OutlineInputBorder(
-                                                              borderRadius: BorderRadius
-                                                                  .all(Radius
-                                                                      .circular(
-                                                                          5.0)),
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                      color:
-                                                                          kMaincolor))),
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    ElevatedButton(
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                                primary:
-                                                                    kMaincolor),
-                                                        onPressed: () {},
-                                                        child: const Text(
-                                                          'Perbarui Username',
                                                         )),
-                                                    TextButton(
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            ubahUsername =
-                                                                false;
-                                                          });
-                                                        },
-                                                        child: const Text(
-                                                          'batalkan',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  kMaincolor),
-                                                        ))
+                                                    loadingUbahNama == true
+                                                        ? const CircularProgressIndicator(
+                                                            color: kMaincolor,
+                                                          )
+                                                        : const SizedBox(
+                                                            height: 0,
+                                                          )
                                                   ],
                                                 )
                                               ],
@@ -319,9 +285,9 @@ class _DetailAccountState extends State<DetailAccount> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text(
-                                        'Kedaireka@gmail.com',
-                                        style: TextStyle(
+                                      Text(
+                                        email!,
+                                        style: const TextStyle(
                                             fontSize: 16,
                                             color: Colors.black,
                                             fontWeight: FontWeight.w400),
@@ -329,6 +295,7 @@ class _DetailAccountState extends State<DetailAccount> {
                                       TextButton(
                                           onPressed: () {
                                             setState(() {
+                                              successUbahEmail = false;
                                               ubahEmail = true;
                                             });
                                           },
@@ -340,6 +307,15 @@ class _DetailAccountState extends State<DetailAccount> {
                                     ],
                                   ),
                                 ),
+                                successUbahEmail == true
+                                    ? const Padding(
+                                        padding: EdgeInsets.only(top: 8),
+                                        child: Text(
+                                          "Berhasil mengubah emal!",
+                                          style: TextStyle(color: kMaincolor),
+                                        ),
+                                      )
+                                    : const SizedBox(),
                                 AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 200),
                                     transitionBuilder: (Widget child,
@@ -362,7 +338,15 @@ class _DetailAccountState extends State<DetailAccount> {
                                                   MainAxisAlignment.start,
                                               children: [
                                                 TextFormField(
-                                                  controller: namaController,
+                                                  controller: emailController,
+                                                  validator: (val) {
+                                                    if (val ==
+                                                        emailController.text) {
+                                                      return 'Email baru sama dengan Email anda sebelumnya';
+                                                    } else if (val!.isEmpty) {
+                                                      return 'Masukan email baru';
+                                                    }
+                                                  },
                                                   decoration:
                                                       const InputDecoration(
                                                           hintText:
@@ -385,7 +369,33 @@ class _DetailAccountState extends State<DetailAccount> {
                                                             .styleFrom(
                                                                 primary:
                                                                     kMaincolor),
-                                                        onPressed: () {},
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            loadingUbahEmail =
+                                                                true;
+                                                          });
+                                                          _authmanager
+                                                              .userGantiEmail(
+                                                                  emailController
+                                                                      .text)
+                                                              .whenComplete(
+                                                                  () async {
+                                                            setState(() {
+                                                              final localStorage =
+                                                                  GetStorage();
+                                                              var emails =
+                                                                  localStorage
+                                                                      .read(
+                                                                          'email');
+                                                              email = emails;
+                                                              successUbahEmail =
+                                                                  true;
+                                                              ubahEmail = false;
+                                                              loadingUbahEmail =
+                                                                  false;
+                                                            });
+                                                          });
+                                                        },
                                                         child: const Text(
                                                           'Perbarui Email',
                                                         )),
@@ -400,7 +410,14 @@ class _DetailAccountState extends State<DetailAccount> {
                                                           style: TextStyle(
                                                               color:
                                                                   kMaincolor),
-                                                        ))
+                                                        )),
+                                                    loadingUbahEmail == true
+                                                        ? const CircularProgressIndicator(
+                                                            color: kMaincolor,
+                                                          )
+                                                        : const SizedBox(
+                                                            height: 0,
+                                                          )
                                                   ],
                                                 )
                                               ],

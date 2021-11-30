@@ -5,10 +5,11 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:kedaireka/theme/constant.dart';
-import 'package:kedaireka/wrapper/auth_manager.dart';
+import 'package:kedaireka/core/auth_manager.dart';
 import 'package:kedaireka/wrapper/auth_validation.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   runApp(MyApp());
 }

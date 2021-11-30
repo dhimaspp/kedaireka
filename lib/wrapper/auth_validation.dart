@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kedaireka/screen/auth/login.dart';
 import 'package:kedaireka/widgets/persistence_bottom_nav.dart';
-import 'package:kedaireka/wrapper/auth_manager.dart';
+import 'package:kedaireka/core/auth_manager.dart';
 
 class AuthValidation extends StatelessWidget {
   const AuthValidation({

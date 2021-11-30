@@ -7,7 +7,7 @@ import 'package:kedaireka/screen/auth/login.dart';
 import 'package:kedaireka/screen/home/account/change_password.dart';
 import 'package:kedaireka/screen/home/account/detail_account.dart';
 import 'package:kedaireka/theme/constant.dart';
-import 'package:kedaireka/wrapper/auth_manager.dart';
+import 'package:kedaireka/core/auth_manager.dart';
 
 class AccountSetting extends StatefulWidget {
   const AccountSetting({Key? key}) : super(key: key);
@@ -18,13 +18,14 @@ class AccountSetting extends StatefulWidget {
 
 class _AccountSettingState extends State<AccountSetting> {
   final AuthenticationManager _authmanager = Get.put(AuthenticationManager());
-  String? nama;
+  String? nama, email;
   @override
   void initState() {
     super.initState();
     final localStorage = GetStorage();
     setState(() {
       nama = localStorage.read('name');
+      email = localStorage.read('email');
     });
   }
 
@@ -70,15 +71,15 @@ class _AccountSettingState extends State<AccountSetting> {
                           radius: 55,
                           backgroundColor: kMaincolor,
                           child: Text(
-                            // nama![0].capitalize!,
-                            'K',
+                            nama![0].capitalize!,
+                            // 'K',
                             style: TextStyle(color: Colors.white, fontSize: 80),
                           ),
                         ),
                         Container(
                           padding: const EdgeInsets.all(12),
                           child: Text(
-                            'Kedaireka',
+                            nama!.capitalizeFirst!,
                             style: TextStyle(color: kMaincolor, fontSize: 24),
                           ),
                         ),

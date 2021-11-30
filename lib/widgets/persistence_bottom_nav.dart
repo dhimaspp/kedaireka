@@ -5,6 +5,8 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:kedaireka/core/auth_manager.dart';
 import 'package:kedaireka/screen/home/account/account_setting.dart';
 import 'package:kedaireka/screen/home/desease_analyze/takePicture.dart';
 import 'package:kedaireka/screen/home/instruksi_screen.dart';
@@ -21,18 +23,29 @@ class PersistenceBottomNavBar extends StatefulWidget {
 
 class _PersistenceBottomNavBarState extends State<PersistenceBottomNavBar> {
   // PersistentTabController? _controller;
+  // ignore: prefer_final_fields
+  AuthenticationManager _authenticationManager =
+      Get.put(AuthenticationManager());
   final autoSizeGroup = AutoSizeGroup();
   int? _selectedBar;
   bool back = false;
   // Future<List>? cameras;
   CameraDescription? cameraDescription;
+  String? _path;
 
   @override
   void initState() {
     super.initState();
     _selectedBar = 0;
+    // _refreshToken();
     EasyLoading.dismiss();
     // _controller = PersistentTabController(initialIndex: 0);
+  }
+
+  _refreshToken() async {
+    final localToken = GetStorage();
+    var token = await localToken.read('token');
+    _authenticationManager.refreshToken(token);
   }
 
   final List<Widget> _buildScreens = <Widget>[
@@ -128,7 +141,11 @@ class _PersistenceBottomNavBarState extends State<PersistenceBottomNavBar> {
               cameraDescription = cameras.firstWhere(
                   (CameraDescription cameraDesc) =>
                       cameraDesc.lensDirection == CameraLensDirection.back);
-              Get.to(() => TakePictureScreen(cameraDesc: cameraDescription!));
+              final result = await Get.to(
+                  () => TakePictureScreen(cameraDesc: cameraDescription!));
+              setState(() {
+                _path = result;
+              });
             },
             child: const Icon(
               Icons.camera_alt_outlined,

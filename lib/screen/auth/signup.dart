@@ -7,10 +7,11 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'package:kedaireka/theme/constant.dart';
 import 'package:kedaireka/widgets/persistence_bottom_nav.dart';
-import 'package:kedaireka/wrapper/auth_manager.dart';
+import 'package:kedaireka/core/auth_manager.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -346,7 +347,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           EasyLoading.show();
                           await _signUpInitiate.userRegister(
                               email!, password, name);
-                          await _signUpInitiate.userLogin(email!, password);
+                          await _signUpInitiate
+                              .userLogin(email!, password)
+                              .whenComplete(() async {
+                            final localStorage = GetStorage();
+                            await localStorage.write('email', email);
+                          });
                           EasyLoading.dismiss();
                           // Get.to(() => const PersistenceBottomNavBar());
                         }
