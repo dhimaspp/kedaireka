@@ -15,4 +15,4 @@ build_android:debug:
       - "build/app/outputs/apk/debug/*.apk"
     expire_in: 30 days
   only:
-    - ci-cd
+    - main
