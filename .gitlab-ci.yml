@@ -1,0 +1,18 @@
+stages:
+  - build
+
+build_android:debug:
+  stage: build
+  image: cirrusci/flutter
+  before_script:
+    - flutter clean
+    - flutter packages get
+  script:
+    - flutter doctor --android-licenses
+    - flutter build apk --debug
+  artifacts:
+    paths:
+      - "build/app/outputs/apk/debug/*.apk"
+    expire_in: 30 days
+  only:
+    - ci-cd
