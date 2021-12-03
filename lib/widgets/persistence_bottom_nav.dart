@@ -42,12 +42,6 @@ class _PersistenceBottomNavBarState extends State<PersistenceBottomNavBar> {
     // _controller = PersistentTabController(initialIndex: 0);
   }
 
-  _refreshToken() async {
-    final localToken = GetStorage();
-    var token = await localToken.read('token');
-    _authenticationManager.refreshToken(token);
-  }
-
   final List<Widget> _buildScreens = <Widget>[
     const InstruksiScreen(),
     // const TakePictureScreen(),

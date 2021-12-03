@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       builder: EasyLoading.init(),
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: themePP,
       home: FutureBuilder(

@@ -162,90 +162,99 @@ class _TakePictureScreenState extends State<TakePictureScreen>
                             ),
                     ]),
               ]),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
-                  Widget>[
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        child: Container(
-                          height: 48,
-                          margin: const EdgeInsets.only(bottom: 24.0, left: 48),
-                          child: Image.asset(
-                            'assets/button/button-gallery.png',
-                          ),
-                        ),
-                        onTap: () async {
-                          setState(() {
-                            _isLoading = true;
-                          });
-                          FilePickerResult? resultImage =
-                              await FilePicker.platform.pickFiles(
-                                  allowMultiple: false,
-                                  type: FileType.custom,
-                                  allowedExtensions: ['jpg']);
-                          if (resultImage != null) {
-                            _analyzeManager.postImageObject(
-                                File(resultImage.files.single.path!));
-                          }
-                          setState(() {
-                            if (_analyzefind.isSuccess.value == true) {
-                              print(
-                                  'analisa find ${_analyzefind.isSuccess.value}');
-                              Get.to(() => ResultAnalyze());
-                            }
-                            _isLoading = _analyzefind.isDataProcessing.value;
-                          });
-                        },
-                      ),
-                    ]),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        child: Container(
-                          height: 74,
-                          margin: EdgeInsets.only(
-                              bottom: 18.0,
-                              right:
-                                  MediaQuery.of(context).size.width / 2 - 37),
-                          child: Image.asset(
-                            'assets/button/Take Photo Button.png',
-                          ),
-                        ),
-                        onTap: () async {
-                          setState(() {
-                            _isLoading = true;
-                          });
-                          try {
-                            setState(() {
-                              _isLoading = true;
-                            });
-                            await _initializeCameraControllerFuture;
-                            final image = await cameraController!.takePicture();
-                            // cameraController!.setFlashMode(FlashMode.off);
-                            print('TakePicturee ----->>>');
-
-                            File file = File(image.path);
-                            print('File path --->>>>> ${image.path}');
-                            _analyzeManager.postImageObject(file);
-                            setState(() {
-                              if (_analyzefind.isSuccess.value == true) {
-                                Get.to(() => ResultAnalyze());
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            child: Container(
+                              height: 48,
+                              margin:
+                                  const EdgeInsets.only(bottom: 24.0, left: 48),
+                              child: Image.asset(
+                                'assets/button/button-gallery.png',
+                              ),
+                            ),
+                            onTap: () async {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              FilePickerResult? resultImage =
+                                  await FilePicker.platform.pickFiles(
+                                      allowMultiple: false,
+                                      type: FileType.custom,
+                                      allowedExtensions: ['jpg']);
+                              if (resultImage != null) {
+                                _analyzeManager
+                                    .postImageObject(
+                                        File(resultImage.files.single.path!))
+                                    .whenComplete(() {
+                                  Get.to(() => ResultAnalyze());
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                });
                               }
-                              _isLoading = _analyzefind.isDataProcessing.value;
-                            });
-                          } catch (e) {
-                            print(e);
-                          }
-                        },
-                      ),
-                    ]),
-              ]),
+                            },
+                          ),
+                        ]),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            child: Container(
+                              height: 74,
+                              margin: EdgeInsets.only(
+                                  bottom: 18.0,
+                                  right: MediaQuery.of(context).size.width / 2 -
+                                      37),
+                              child: Image.asset(
+                                'assets/button/Take Photo Button.png',
+                              ),
+                            ),
+                            onTap: () async {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              try {
+                                setState(() {
+                                  _isLoading = true;
+                                });
+                                await _initializeCameraControllerFuture;
+                                final image =
+                                    await cameraController!.takePicture();
+                                // cameraController!.setFlashMode(FlashMode.off);
+                                print('TakePicturee ----->>>');
+
+                                File file = File(image.path);
+                                print('File path --->>>>> ${image.path}');
+                                _analyzeManager
+                                    .postImageObject(file)
+                                    .whenComplete(() {
+                                  Get.to(() => ResultAnalyze());
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                });
+                                // setState(() {
+                                //   if (_analyzefind.isSuccess.value == true) {
+                                //     Get.to(() => ResultAnalyze());
+                                //   }
+                                //   _isLoading = _analyzefind.isDataProcessing.value;
+                                // });
+                              } catch (e) {
+                                print(e);
+                              }
+                            },
+                          ),
+                        ]),
+                  ]),
             ],
           )),
           isLoading: _isLoading),

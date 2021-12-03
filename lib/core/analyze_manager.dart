@@ -30,6 +30,7 @@ class AnalyzeManager extends GetxController {
   }
 
   Future<void> postImageObject(File file) async {
+    isDataProcessing(true);
     final response = await _analyzeDeseaseService.postImageObject(file);
 
     if (response is AnalyzeDesease) {
@@ -38,15 +39,16 @@ class AnalyzeManager extends GetxController {
       description.clear();
       prediction.clear();
       treatment.clear();
-      isDataProcessing(true);
+
       classType.addAll(response.classType);
       description.addAll(response.description);
       imgBounding = response.imgbounding.obs;
       prediction.addAll(response.predictions);
       treatment.addAll(response.treatment);
-      isDataProcessing(false);
+
       isSuccess(true);
-      Get.to(() => ResultAnalyze());
+      // Get.to(() => ResultAnalyze());
+      isDataProcessing(false);
       // cameraController!.dispose();
 
     } else {

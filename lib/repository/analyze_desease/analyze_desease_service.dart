@@ -1,39 +1,64 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/status/http_status.dart';
+import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:kedaireka/model/analyze_desease_model.dart';
 import 'package:path/path.dart';
+import 'package:mime/mime.dart';
 
-class AnalyzeDeseaseService extends GetConnect {
+class AnalyzeDeseaseService {
+  Dio? _dio;
+  final String mainUrl = 'https://kedaireka.widyarobotics.com';
+  BaseOptions options = BaseOptions(
+      baseUrl: 'https://kedaireka.widyarobotics.com',
+      receiveDataWhenStatusError: true,
+      connectTimeout: 60 * 1000, // 30 seconds
+      receiveTimeout: 60 * 1000 // 30 seconds
+      );
   Future postImageObject(File file) async {
-    final form = FormData({
-      'image': MultipartFile(file,
-          filename: basename(file.path), contentType: 'multipart/form-data'),
+    _dio = Dio(options);
+    String? mimeOutput = lookupMimeType(file.path);
+    print("mime output: ${mimeOutput!.split('/').first}");
+    var postImage = FormData.fromMap({
+      'image': await MultipartFile.fromFile(file.path,
+          filename: basename(file.path),
+          contentType: MediaType(
+            mimeOutput.split('/').first,
+            mimeOutput.split('/').last,
+          ))
     });
-    final storaging = GetStorage();
-    var token = await storaging.read('token');
-
-    final response =
-        await post('https://kedaireka.widyarobotics.com/v1/imageProcess/', form,
+    try {
+      final storaging = GetStorage();
+      var token = await storaging.read('token');
+      Response response = await _dio!.post(mainUrl + '/v1/imageProcess/',
+          data: postImage,
+          options: Options(
             headers: {
               'Authorization': 'Bearer $token',
-              'Connection': 'keep-alive',
+              'Connection': 'keep-alive'
             },
-            contentType: 'multipart/form-data');
-    print('analisa berhasil------>>>>> ${response.body}');
-    if (response.statusCode == HttpStatus.created) {
-      print('created----------------');
-      var analyze = AnalyzeDesease.fromJson(response.body);
-      return analyze;
-    } else if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
-      return 'connection timeout';
-    } else {
-      var body = response.body;
-      var message = body['detail'];
-      return message ?? body;
+            contentType: 'multipart/form-data',
+            method: 'post',
+            responseType: ResponseType.json,
+          ));
+      print('analisa berhasil------>>>>> ${response.data}');
+      return AnalyzeDesease.fromJson(response.data);
+    } on DioError catch (error, stackTrace) {
+      print("Exception occured: $error stackTrace: $stackTrace");
+      if (error.type == DioErrorType.response) {
+        print(error.response!.data);
+        var errorBody = error.response!.data;
+        var message = errorBody['detail'];
+        return message;
+      } else if (error.type == DioErrorType.connectTimeout) {
+        return 'Koneksi terhenti, Harap periksa internet koneksi anda';
+      } else {
+        return error.response!.data;
+      }
     }
   }
 }

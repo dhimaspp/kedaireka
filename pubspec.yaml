@@ -29,6 +29,7 @@ dependencies:
   http_parser: ^4.0.0
   image_picker: ^0.8.0
   loading_overlay: ^0.3.0
+  mime: ^1.0.1
   path: ^1.8.0
 
 dev_dependencies:
