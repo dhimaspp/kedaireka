@@ -1,185 +1,176 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
-
-import 'package:get/get_connect.dart';
-import 'package:get/get_connect/http/src/status/http_status.dart';
+import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
 
-class AuthApi extends GetConnect {
-  Future getAccess(String email, String password) async {
-    var postRegister = FormData({"email": email, "password": password});
-    final response = await post(
-      'https://kedaireka.widyarobotics.com/v1/token/',
-      postRegister,
-      contentType: 'multipart/form-data',
-    );
-    print('data postregister-------->$postRegister');
+class AuthApi {
+  Dio? _dio;
+  final String mainUrl = 'https://kedaireka.widyarobotics.com';
+  BaseOptions options = BaseOptions(
+      baseUrl: 'https://kedaireka.widyarobotics.com',
+      receiveDataWhenStatusError: true,
+      connectTimeout: 30 * 1000, // 60 seconds
+      receiveTimeout: 30 * 1000 // 60 seconds
+      );
 
-    if (response.statusCode == HttpStatus.ok) {
+  Future getAccess(String email, String password) async {
+    _dio = Dio(options);
+    var postAccess = FormData.fromMap({"email": email, "password": password});
+    try {
+      Response response = await _dio!.post(
+        'https://kedaireka.widyarobotics.com/v1/token/',
+        data: postAccess,
+      );
+
       final storaging = GetStorage();
-      var body = response.body;
+      var body = response.data;
       var token = body['access'];
       var name = body['first_name'];
       print('token didapatkan === $token');
       await storaging.write('token', token);
       await storaging.write('name', name);
       return 'login sukses';
-    } else if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
-      return 'Harap periksa internet koneksi anda';
-    } else {
-      var body = response.body;
-      var message = body['detail'];
-      print('error message $message');
-      return message.toString();
+    } on DioError catch (error, stackTrace) {
+      print("Exception occured: $error stackTrace: $stackTrace");
+      if (error.type == DioErrorType.response) {
+        print(error.response!.data);
+        var errorBody = error.response!.data;
+        var message = errorBody['detail'];
+        return message;
+      } else if (error.type == DioErrorType.connectTimeout) {
+        return 'Koneksi terhenti, Harap periksa internet koneksi anda';
+      } else {
+        return error.response!.data;
+      }
     }
   }
 
   Future userRegistration(String email, String password, String nama) async {
-    Map<String, String> postRegister = {
-      'email': email,
-      'password': password,
-      'first_name': nama
-    };
-    final response = await post(
-      'https://kedaireka.widyarobotics.com/v1/user/create_user/',
-      json.encode(postRegister),
-    );
-    print(json.encode(postRegister));
-
-    if (response.statusCode == HttpStatus.created) {
+    _dio = Dio(options);
+    var postRegistration = FormData.fromMap(
+        {'email': email, 'password': password, 'first_name': nama});
+    try {
+      Response response = await _dio!.post(
+        mainUrl + '/v1/user/create_user/',
+        data: postRegistration,
+      );
       final storaging = GetStorage();
-      var body = response.body;
-      var email = body['email'];
-      var name = body['first_name'];
-      await storaging.write('email', email);
-      await storaging.write('name', name);
-      print('email dan nama tersimpan === $email & $name');
-      return 'register sukses';
-    } else if (response.statusCode == HttpStatus.requestTimeout) {
-      return 'Harap periksa internet koneksi anda';
-    } else {
-      var body = response.body;
-      var message = body['detail'];
-      var email = body;
-      // var email = 'email sudah dipakai \nharap gunakan email lain';
-      print('error message $message');
-      return message ?? email.toString();
-    }
-  }
-
-  Future refreshToken(String token) async {
-    var refresh = FormData({'refresh': token.trim()});
-    final response = await post(
-        'https://kedaireka.widyarobotics.com/v1/token/refresh/', refresh,
-        contentType: 'multipart/form-data');
-    //print(json.encode(refresh));
-
-    if (response.statusCode == HttpStatus.created) {
-      final storaging = GetStorage();
-      var body = response.body;
+      var body = response.data;
       var token = body['access'];
-
-      await storaging.remove('token');
+      var name = body['first_name'];
+      print('token didapatkan === $token');
       await storaging.write('token', token);
-      print('token direfresh === $token');
-      return 'refresh sukses';
-    } else if (response.statusCode == HttpStatus.requestTimeout) {
-      return 'Harap periksa internet koneksi anda';
-    } else {
-      var body = response.body;
-      var message = body['detail'];
-      var email = body;
-      // var email = 'email sudah dipakai \nharap gunakan email lain';
-      print('error message $message');
-      return message ?? email.toString();
+      await storaging.write('name', name);
+      return 'register sukses';
+    } on DioError catch (error, stackTrace) {
+      print("Exception occured: $error stackTrace: $stackTrace");
+      if (error.type == DioErrorType.response) {
+        print(error.response!.data);
+        var errorBody = error.response!.data;
+        var message = errorBody['detail'];
+        var email = errorBody;
+        return message ?? errorBody.toString();
+      } else if (error.type == DioErrorType.connectTimeout) {
+        return 'Koneksi terhenti, Harap periksa internet koneksi anda';
+      } else {
+        return error.response!.data;
+      }
     }
   }
 
   Future gantiNama(String nama) async {
-    var postRegister = FormData({"first_name": nama});
-    final storaging = GetStorage();
-    var token = await storaging.read('token');
-
-    final response = await put(
-        'https://kedaireka.widyarobotics.com/v1/user/update_user/',
-        postRegister,
-        contentType: 'multipart/form-data',
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Connection': 'keep-alive',
-        });
-    if (response.statusCode == HttpStatus.ok) {
+    _dio = Dio(options);
+    var postNama = FormData.fromMap({"first_name": nama});
+    try {
       final storaging = GetStorage();
-      var body = response.body;
-
+      var token = await storaging.read('token');
+      Response response = await _dio!.put(mainUrl + '/v1/user/update_user/',
+          data: postNama,
+          options: Options(headers: {
+            'Authorization': 'Bearer $token',
+            'Connection': 'keep-alive',
+          }));
+      var body = response.data;
       var name = body['first_name'];
 
       await storaging.write('name', name);
       return 'ganti nama sukses';
-    } else if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
-      return 'Harap periksa internet koneksi anda';
-    } else {
-      var body = response.body;
-      var message = body['detail'];
-      print('error message $message');
-      return message.toString();
+    } on DioError catch (error, stackTrace) {
+      print("Exception occured: $error stackTrace: $stackTrace");
+      if (error.type == DioErrorType.response) {
+        print(error.response!.data);
+        var errorBody = error.response!.data;
+        var message = errorBody['detail'];
+
+        return message;
+      } else if (error.type == DioErrorType.connectTimeout) {
+        return 'Koneksi terhenti, Harap periksa internet koneksi anda';
+      } else {
+        return error.response!.data;
+      }
     }
   }
 
   Future gantiEmail(String email) async {
-    var postRegister = FormData({"email": email});
-    final storaging = GetStorage();
-    var token = await storaging.read('token');
-
-    final response = await put(
-        'https://kedaireka.widyarobotics.com/v1/user/update_user/',
-        postRegister,
-        contentType: 'multipart/form-data',
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Connection': 'keep-alive',
-        });
-    if (response.statusCode == HttpStatus.ok) {
+    _dio = Dio(options);
+    var postNama = FormData.fromMap({"email": email});
+    try {
       final storaging = GetStorage();
-      var body = response.body;
-
+      var token = await storaging.read('token');
+      Response response = await _dio!.put(mainUrl + '/v1/user/update_user/',
+          data: postNama,
+          options: Options(headers: {
+            'Authorization': 'Bearer $token',
+            'Connection': 'keep-alive',
+          }));
+      var body = response.data;
       var email = body['email'];
 
       await storaging.write('email', email);
       return 'ganti email sukses';
-    } else if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
-      return 'Harap periksa internet koneksi anda';
-    } else {
-      var body = response.body;
-      var message = body['detail'];
-      print('error message $message');
-      return message.toString();
+    } on DioError catch (error, stackTrace) {
+      print("Exception occured: $error stackTrace: $stackTrace");
+      if (error.type == DioErrorType.response) {
+        print(error.response!.data);
+        var errorBody = error.response!.data;
+        var message = errorBody['detail'];
+
+        return message;
+      } else if (error.type == DioErrorType.connectTimeout) {
+        return 'Koneksi terhenti, Harap periksa internet koneksi anda';
+      } else {
+        return error.response!.data;
+      }
     }
   }
 
   Future gantiPassword(String password) async {
-    var postRegister = FormData({"new_password": password});
-    final storaging = GetStorage();
-    var token = await storaging.read('token');
-
-    final response = await put(
-        'https://kedaireka.widyarobotics.com/v1/user/change_password/',
-        postRegister,
-        contentType: 'multipart/form-data',
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Connection': 'keep-alive',
-        });
-    if (response.statusCode == HttpStatus.ok) {
+    _dio = Dio(options);
+    var postPassword = FormData.fromMap({"new_password": password});
+    try {
+      final storaging = GetStorage();
+      var token = await storaging.read('token');
+      Response response = await _dio!.put(mainUrl + '/v1/user/change_password/',
+          data: postPassword,
+          options: Options(headers: {
+            'Authorization': 'Bearer $token',
+            'Connection': 'keep-alive',
+          }));
       return 'ganti password sukses';
-    } else if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
-      return 'Harap periksa internet koneksi anda';
-    } else {
-      var body = response.body;
-      var message = body['detail'];
-      print('error message $message');
-      return message.toString();
+    } on DioError catch (error, stackTrace) {
+      print("Exception occured: $error stackTrace: $stackTrace");
+      if (error.type == DioErrorType.response) {
+        print(error.response!.data);
+        var errorBody = error.response!.data;
+        var message = errorBody['detail'];
+
+        return message;
+      } else if (error.type == DioErrorType.connectTimeout) {
+        return 'Koneksi terhenti, Harap periksa internet koneksi anda';
+      } else {
+        return error.response!.data;
+      }
     }
   }
 }

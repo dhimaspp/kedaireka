@@ -5,7 +5,6 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:kedaireka/repository/auth/auth_api.dart';
-import 'package:kedaireka/screen/auth/login.dart';
 import 'package:kedaireka/theme/constant.dart';
 import 'package:kedaireka/widgets/persistence_bottom_nav.dart';
 
@@ -35,25 +34,6 @@ class AuthenticationManager extends GetxController {
           buttonColor: kMaincolor,
           onConfirm: () {
             Get.back();
-          });
-    }
-  }
-
-  Future<void> refreshToken(String token) async {
-    final response = await _authApi.refreshToken(token);
-    if (response == 'refresh sukses') {
-      print('refresh sukses');
-      // await userLogin(email, password);
-      // isLogged.value = true;
-    } else {
-      Get.defaultDialog(
-          middleText: response,
-          textConfirm: 'Logout',
-          confirmTextColor: Colors.white,
-          buttonColor: kMaincolor,
-          onConfirm: () {
-            userLogout();
-            Get.to(() => const LoginScreen());
           });
     }
   }

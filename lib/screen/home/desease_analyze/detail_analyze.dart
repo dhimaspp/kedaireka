@@ -112,11 +112,23 @@ class _DetailAnalyzeState extends State<DetailAnalyze>
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          SizedBox(
+                          Container(
                             height: 230,
-                            width: Get.width,
+                            // padding: const EdgeInsets.only(left: 10, right: 10),
+                            // width: Get.width,
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: kMaincolor, width: 4)),
                             child: CachedNetworkImage(
                               imageUrl: widget.gambarTerkait[_selectedIndex],
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) =>
+                                      LinearProgressIndicator(
+                                          backgroundColor: Colors.grey[100],
+                                          color: Colors.grey[300],
+                                          value: downloadProgress.progress),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
                             ),
                           ),
                           Container(
@@ -135,21 +147,30 @@ class _DetailAnalyzeState extends State<DetailAnalyze>
                                       });
                                     },
                                     child: Container(
+                                      padding: const EdgeInsets.only(
+                                          left: 10, right: 10),
                                       decoration: BoxDecoration(
                                           border: _selectedIndex == index
                                               ? Border.all(
                                                   color: kMaincolor, width: 3)
-                                              : null,
+                                              : Border.all(
+                                                  color: Colors.grey, width: 1),
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(8))),
                                       margin: const EdgeInsets.only(right: 18),
-                                      child: ClipRRect(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(8)),
-                                        child: CachedNetworkImage(
-                                          imageUrl: gambarThumbnail![index],
-                                          fit: BoxFit.cover,
-                                        ),
+                                      child: CachedNetworkImage(
+                                        imageUrl: gambarThumbnail![index],
+                                        // progressIndicatorBuilder: (context,
+                                        //         url, downloadProgress) =>
+                                        //     LinearProgressIndicator(
+                                        //         backgroundColor:
+                                        //             Colors.grey[100],
+                                        //         color: Colors.grey[300],
+                                        //         value: downloadProgress
+                                        //             .progress),
+                                        // errorWidget: (context, url, error) =>
+                                        //     const Icon(Icons.error),
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
                                   );
