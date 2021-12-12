@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, must_be_immutable
+// ignore_for_file: avoid_print, must_be_immutable, prefer_const_constructors
 
 import 'dart:async';
 
@@ -70,7 +70,7 @@ class ResultAnalyze extends GetView<AnalyzeManager> {
                   children: [
                     SizedBox(
                       width: Get.width,
-                      height: Get.width,
+                      height: 380,
                       child: ClipRRect(
                         borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(24),
@@ -84,8 +84,27 @@ class ResultAnalyze extends GetView<AnalyzeManager> {
                                       backgroundColor: Colors.grey[100],
                                       color: Colors.grey[300],
                                       value: downloadProgress.progress),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
+                          errorWidget: (context, url, error) => Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.error,
+                                size: 30,
+                              ),
+                              Text(
+                                'Harap periksa koneksi internet anda\nTap ikon refresh dibawah untuk refresh halaman',
+                                textAlign: TextAlign.center,
+                              ),
+                              IconButton(
+                                  onPressed: () {
+                                    Get.to(() => ResultAnalyze());
+                                  },
+                                  icon: const Icon(
+                                    Icons.refresh_rounded,
+                                    size: 30,
+                                  ))
+                            ],
+                          ),
                           fit: BoxFit.cover,
                         ),
                       ),

@@ -237,7 +237,7 @@ class _TakePictureScreenState extends State<TakePictureScreen>
                                 _analyzeManager
                                     .postImageObject(file)
                                     .whenComplete(() {
-                                  Get.to(() => ResultAnalyze());
+                                  // Get.to(() => ResultAnalyze());
                                   setState(() {
                                     _isLoading = false;
                                   });

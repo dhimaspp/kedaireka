@@ -52,9 +52,11 @@ class AnalyzeDeseaseService {
       if (error.type == DioErrorType.response) {
         print(error.response!.data);
         var errorBody = error.response!.data;
-        var message = errorBody['detail'];
-        return message;
+        // var message = errorBody['detail'];
+        return 'Tidak mendapatkan objek\n\nPastikan objek foto berisi cabai atau daun cabai';
       } else if (error.type == DioErrorType.connectTimeout) {
+        return 'Koneksi terhenti, Harap periksa internet koneksi anda';
+      } else if (error.type == DioErrorType.other) {
         return 'Koneksi terhenti, Harap periksa internet koneksi anda';
       } else {
         return error.response!.data;

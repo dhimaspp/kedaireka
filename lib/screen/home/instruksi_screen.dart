@@ -70,7 +70,7 @@ class _InstruksiScreenState extends State<InstruksiScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    const SizedBox(height: 90),
+                    const SizedBox(height: 60),
                     CarouselSlider.builder(
                       carouselController: buttonCarousel,
                       itemCount: itemsCarousel.length,

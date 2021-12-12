@@ -47,7 +47,7 @@ class AnalyzeManager extends GetxController {
       treatment.addAll(response.treatment);
 
       isSuccess(true);
-      // Get.to(() => ResultAnalyze());
+      Get.to(() => ResultAnalyze());
       isDataProcessing(false);
       // cameraController!.dispose();
 
