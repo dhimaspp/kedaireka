@@ -30,7 +30,7 @@ final themePP = ThemeData(
   primaryColorLight: const Color(0xFFEAF1ED),
   primaryColor: const Color(0xFF307B52),
   // accentColor: kMaincolor,
-  textSelectionTheme: const TextSelectionThemeData(cursorColor: kMaincolor),
+  textSelectionTheme: const TextSelectionThemeData(cursorColor: Colors.black),
   scaffoldBackgroundColor: Colors.white,
   // typography: Ty,
   inputDecorationTheme: InputDecorationTheme(
