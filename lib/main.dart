@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       builder: EasyLoading.init(),
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Find Disease',
       theme: themePP,
       home: FutureBuilder(
           future: initializeSettings(),

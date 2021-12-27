@@ -207,7 +207,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   TextFormField(
                     // controller: _textController,
                     // textInputAction: TextInputAction.next,
-                    cursorColor: kFillColor,
+                    cursorColor: Colors.black,
                     decoration: textInputDecoration.copyWith(
                         labelStyle: textInputDecoration.labelStyle!
                             .copyWith(color: Colors.black54, fontSize: 16),

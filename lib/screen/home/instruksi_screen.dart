@@ -17,18 +17,21 @@ class _InstruksiScreenState extends State<InstruksiScreen> {
   int? currentIndexCarousel = 0;
 
   final itemsCarousel = <String>[
+    'assets/instructions/Illustration - first.jpg',
     'assets/instructions/Illustration - Observe.png',
     'assets/instructions/Illustration - Notice!.png',
     'assets/instructions/Illustration - Center!.png',
     'assets/instructions/Illustration - Focus.png'
   ];
   final itemsTextJudul = <String>[
+    'Tanaman Cabai',
     'Amati',
     'Perhatian!',
     'Ambil Terpusat',
     'Fokus Pada Objek!'
   ];
   final itemsTextDesc = <String>[
+    'Saat ini aplikasi dapat digunakan untuk menganalisis tanaman cabai',
     'Keluar dan jepret masalah penyakit tanaman Anda!',
     'Jangan jepret tanaman yang terlalu jauh untuk hasil yang lebih baik.',
     'Ambil foto penyakit tanaman secara terpusat dan tepat!',
@@ -97,6 +100,7 @@ class _InstruksiScreenState extends State<InstruksiScreen> {
                               Image.asset(
                                 itemsCarousel[indexItem],
                                 fit: BoxFit.fitHeight,
+                                height: 300,
                               ),
                               const SizedBox(
                                 height: 18,
@@ -128,11 +132,6 @@ class _InstruksiScreenState extends State<InstruksiScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          const Icon(
-                            Icons.circle,
-                            size: 10,
-                            color: Colors.grey,
-                          ),
                           Icon(
                             Icons.circle,
                             size: currentIndexCarousel == 0 ? 14 : 10,
@@ -158,6 +157,13 @@ class _InstruksiScreenState extends State<InstruksiScreen> {
                             Icons.circle,
                             size: currentIndexCarousel == 3 ? 14 : 10,
                             color: currentIndexCarousel == 3
+                                ? kMaincolor
+                                : Colors.grey,
+                          ),
+                          Icon(
+                            Icons.circle,
+                            size: currentIndexCarousel == 4 ? 14 : 10,
+                            color: currentIndexCarousel == 4
                                 ? kMaincolor
                                 : Colors.grey,
                           ),

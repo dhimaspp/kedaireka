@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.widya.kedaireka">
    <application
-        android:label="Find Desease"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Find Disease"
+        android:icon="@mipmap/find">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

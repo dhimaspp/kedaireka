@@ -190,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   TextFormField(
                     // controller: _textController,
-                    cursorColor: kFillColor,
+                    cursorColor: Colors.black,
                     decoration: textInputDecoration.copyWith(
                         labelStyle: textInputDecoration.labelStyle!
                             .copyWith(color: Colors.black54, fontSize: 16),
